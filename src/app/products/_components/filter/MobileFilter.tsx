@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/20/solid';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { PriceRange, FilterProps } from '../../../../types/product';
 import { useFilterOptions } from '@/hooks/useFilterOptions';
@@ -34,13 +35,74 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
     };
   }, [products]);
 
-  const [priceRange, setPriceRange] = useState<PriceRange>(() => priceRangeValues);
-  const [selectedPriceRange, setSelectedPriceRange] = useState<PriceRange | undefined>(undefined);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [priceRange, setPriceRange] = useState<PriceRange>(() => {
+    const minParam = searchParams.get('priceMin');
+    const maxParam = searchParams.get('priceMax');
+    return {
+      min: minParam ? Number(minParam) : priceRangeValues.min,
+      max: maxParam ? Number(maxParam) : priceRangeValues.max,
+    };
+  });
+  const [selectedPriceRange, setSelectedPriceRange] = useState<PriceRange | undefined>(() => {
+    const minParam = searchParams.get('priceMin');
+    const maxParam = searchParams.get('priceMax');
+    if (minParam || maxParam) {
+      return {
+        min: minParam ? Number(minParam) : priceRangeValues.min,
+        max: maxParam ? Number(maxParam) : priceRangeValues.max,
+      };
+    }
+    return undefined;
+  });
   const availableOptions = useFilterOptions(products);
-  const [sliderValue, setSliderValue] = useState([priceRangeValues.min, priceRangeValues.max]);
+  const [sliderValue, setSliderValue] = useState(() => {
+    const minParam = searchParams.get('priceMin');
+    const maxParam = searchParams.get('priceMax');
+    return [
+      minParam ? Number(minParam) : priceRangeValues.min,
+      maxParam ? Number(maxParam) : priceRangeValues.max,
+    ];
+  });
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
 
-  const handlePriceSearch = () => setSelectedPriceRange(priceRange);
+  useEffect(() => {
+    const minParam = searchParams.get('priceMin');
+    const maxParam = searchParams.get('priceMax');
+    
+    const newMin = minParam ? Number(minParam) : priceRangeValues.min;
+    const newMax = maxParam ? Number(maxParam) : priceRangeValues.max;
+    
+    setPriceRange({ min: newMin, max: newMax });
+    setSliderValue([newMin, newMax]);
+    
+    if (minParam || maxParam) {
+      setSelectedPriceRange({ min: newMin, max: newMax });
+    } else {
+      setSelectedPriceRange(undefined);
+    }
+  }, [searchParams, priceRangeValues]);
+
+  const handlePriceSearch = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (priceRange.min !== priceRangeValues.min) {
+      params.set('priceMin', priceRange.min.toString());
+    } else {
+      params.delete('priceMin');
+    }
+    
+    if (priceRange.max !== priceRangeValues.max) {
+      params.set('priceMax', priceRange.max.toString());
+    } else {
+      params.delete('priceMax');
+    }
+    
+    router.push(`/products?${params.toString()}`);
+    setSelectedPriceRange(priceRange);
+  };
   const handleSliderChange = (value: number[]) => {
     setSliderValue(value);
     setPriceRange({ min: value[0], max: value[1] });
@@ -54,10 +116,14 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
     setSelectedColors((prev) => (prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]));
   };
   const handleReset = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('priceMin');
+    params.delete('priceMax');
+    router.push(`/products?${params.toString()}`);
+
     setPriceRange(priceRangeValues);
     setSelectedPriceRange(undefined);
     setSliderValue([priceRangeValues.min, priceRangeValues.max]);
-
     setSelectedColors([]);
   };
 
