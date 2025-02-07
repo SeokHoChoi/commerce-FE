@@ -51,7 +51,7 @@ export default function CategoryForm({ categories, handleClose }: Props) {
           );
         })}
       </ul>
-      <div className="w-[1] h-full bg-[#EAEAEA]" />
+      <div className="w-[1px] h-full bg-[#EAEAEA]" />
       <ul className="grow flex flex-col gap-2 overflow-y-auto">
         {currentCategory?.subCategories.map((category, i) => {
           return (
