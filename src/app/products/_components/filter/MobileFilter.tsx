@@ -193,14 +193,16 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
               onSearch={handlePriceSearch}
             />
 
-            {availableOptions?.colors?.map((color) => (
+            {/* 색상 필터링 주석처리 */}
+
+            {/* {availableOptions?.colors?.map((color) => (
               <ColorFilter
                 key={color}
                 color={color}
                 selected={selectedColors.includes(color)}
                 onColorSelect={handleColorSelect}
               />
-            ))}
+            ))} */}
           </div>
 
           <MobileSelectedOptionTag

@@ -125,10 +125,7 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
     <div className="w-full max-w-xs rounded-lg p-7">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-lg font-bold">필터</h2>
-        <button
-          onClick={handleReset}
-          className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
-        >
+        <button onClick={handleReset} className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
           <ArrowPathIcon className="h-4 w-4" />
           초기화
         </button>
@@ -160,7 +157,9 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
             onSearch={handlePriceSearch}
           />
 
-          <hr className="my-8" />
+          {/* 색상 필터링 주석처리 */}
+
+          {/* <hr className="my-8" />
 
           {Object.entries(availableOptions).map(([optionName, values]) => (
             <ColorFilter
@@ -169,7 +168,7 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
               selectedColors={selectedColors}
               onColorSelect={handleColorSelect}
             />
-          ))}
+          ))} */}
         </>
       )}
     </div>
