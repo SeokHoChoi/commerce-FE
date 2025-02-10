@@ -9,7 +9,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { SelectedOptionTag } from '@/app/products/_components/filter/SelectedOptionTag';
 import { PriceFilter } from '@/app/products/_components/filter/PriceFilter';
 import { ColorFilter } from '@/app/products/_components/filter/ColorFilter';
+import { RatingFilter } from '@/app/products/_components/filter/RatingFilter';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 const Filter: React.FC<FilterProps> = ({ products }) => {
   const searchParams = useSearchParams();
@@ -109,9 +111,28 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
     setSelectedColors((prev) => (prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]));
   };
 
+  const handleReset = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('priceMin');
+    params.delete('priceMax');
+    params.delete('rating');
+    router.push(`?${params.toString()}`);
+    setSelectedPriceRange(undefined);
+    setSelectedColors([]);
+  };
+
   return (
     <div className="w-full max-w-xs rounded-lg p-7">
-      <h2 className="text-lg font-bold mb-5">필터</h2>
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-lg font-bold">필터</h2>
+        <button
+          onClick={handleReset}
+          className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
+        >
+          <ArrowPathIcon className="h-4 w-4" />
+          초기화
+        </button>
+      </div>
       <hr />
 
       {isLoading ? (
@@ -126,6 +147,9 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
             selectedColors={selectedColors}
             onColorRemove={handleColorSelect}
           />
+
+          <RatingFilter />
+          <hr className="my-8" />
 
           <PriceFilter
             priceRange={priceRange}
