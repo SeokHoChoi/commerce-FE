@@ -147,7 +147,7 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
             <AdjustmentsHorizontalIcon className="h-6 w-6" />
           </button>
         </DrawerTrigger>
-        <div className="flex items-center gap-3 flex-1">
+        <div className="flex items-center gap-3 flex-1 justify-between">
           <MobileSelectedOptionTag
             priceRange={selectedPriceRange}
             onPriceRangeRemove={() => {
