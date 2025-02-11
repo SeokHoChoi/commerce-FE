@@ -6,11 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 import { PriceRange, FilterProps } from '../../../../types/product';
-import { useFilterOptions } from '@/hooks/useFilterOptions';
 
 import { MobileSelectedOptionTag } from '@/app/products/_components/filter/SelectedOptionTag';
 import { PriceFilter } from '@/app/products/_components/filter/PriceFilter';
-import { ColorFilter } from '@/app/products/_components/filter/ColorFilter';
 import { RatingFilter } from '@/app/products/_components/filter/RatingFilter';
 
 import {
@@ -26,7 +24,6 @@ import {
 export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const availableOptions = useFilterOptions(products);
 
   const priceRangeValues = useMemo(() => {
     const prices = products.map((product) => product.price);
@@ -59,7 +56,6 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
     return [minParam ? Number(minParam) : priceRangeValues.min, maxParam ? Number(maxParam) : priceRangeValues.max];
   });
 
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedRating, setSelectedRating] = useState<number | null>(() => {
     const rating = searchParams.get('rating');
     return rating ? Number(rating) : null;
@@ -123,10 +119,6 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
     setSelectedPriceRange(priceRange);
   };
 
-  const handleColorSelect = (color: string) => {
-    setSelectedColors((prev) => (prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]));
-  };
-
   const handleRemoveRating = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete('rating');
@@ -145,7 +137,6 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
     setPriceRange({ min: priceRangeValues.min, max: priceRangeValues.max });
     setSliderValue([priceRangeValues.min, priceRangeValues.max]);
     setSelectedRating(null);
-    setSelectedColors([]);
   };
 
   return (
@@ -168,8 +159,6 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
               params.delete('priceMax');
               router.push(`?${params.toString()}`);
             }}
-            selectedColors={selectedColors}
-            onColorRemove={(color) => setSelectedColors((prev) => prev.filter((c) => c !== color))}
             selectedRating={selectedRating}
             onRatingRemove={handleRemoveRating}
             global
@@ -200,10 +189,8 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
               </button>
             </div>
           </DrawerHeader>
-
           <div className="px-4 z-10">
             <RatingFilter />
-
             <PriceFilter
               priceRange={priceRange}
               sliderValue={sliderValue}
@@ -212,19 +199,7 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
               onInputChange={handleInputChange}
               onSearch={handlePriceSearch}
             />
-
-            {/* 색상 필터링 주석처리 */}
-
-            {/* {availableOptions?.colors?.map((color) => (
-              <ColorFilter
-                key={color}
-                color={color}
-                selected={selectedColors.includes(color)}
-                onColorSelect={handleColorSelect}
-              />
-            ))} */}
           </div>
-
           <MobileSelectedOptionTag
             priceRange={selectedPriceRange}
             onPriceRangeRemove={() => {
@@ -236,12 +211,9 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
               params.delete('priceMax');
               router.push(`?${params.toString()}`);
             }}
-            selectedColors={selectedColors}
-            onColorRemove={(color) => setSelectedColors((prev) => prev.filter((c) => c !== color))}
             selectedRating={selectedRating}
             onRatingRemove={handleRemoveRating}
           />
-
           <DrawerFooter className="flex gap-2">
             <button onClick={handleReset} className="font-semibold flex-1 text-sm border border-zinc-300 rounded-xl">
               초기화

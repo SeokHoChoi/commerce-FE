@@ -3,12 +3,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
 import { PriceRange, FilterProps } from '../../../../types/product';
-import { useFilterOptions } from '@/hooks/useFilterOptions';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { SelectedOptionTag } from '@/app/products/_components/filter/SelectedOptionTag';
 import { PriceFilter } from '@/app/products/_components/filter/PriceFilter';
-import { ColorFilter } from '@/app/products/_components/filter/ColorFilter';
 import { RatingFilter } from '@/app/products/_components/filter/RatingFilter';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
@@ -48,13 +46,11 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
     return undefined;
   });
   const [isLoading, setIsLoading] = useState(true);
-  const availableOptions = useFilterOptions(products);
   const [sliderValue, setSliderValue] = useState(() => {
     const minParam = searchParams.get('priceMin');
     const maxParam = searchParams.get('priceMax');
     return [minParam ? Number(minParam) : priceRangeValues.min, maxParam ? Number(maxParam) : priceRangeValues.max];
   });
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -107,9 +103,6 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
     setPriceRange(newPriceRange);
     setSliderValue([newPriceRange.min, newPriceRange.max]);
   };
-  const handleColorSelect = (color: string) => {
-    setSelectedColors((prev) => (prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]));
-  };
 
   const handleReset = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -118,7 +111,6 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
     params.delete('rating');
     router.push(`?${params.toString()}`);
     setSelectedPriceRange(undefined);
-    setSelectedColors([]);
   };
 
   return (
@@ -141,13 +133,9 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
           <SelectedOptionTag
             priceRange={selectedPriceRange}
             onPriceRangeRemove={() => setSelectedPriceRange(undefined)}
-            selectedColors={selectedColors}
-            onColorRemove={handleColorSelect}
           />
-
           <RatingFilter />
           <hr className="my-8" />
-
           <PriceFilter
             priceRange={priceRange}
             sliderValue={sliderValue}
@@ -156,19 +144,6 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
             onInputChange={handleInputChange}
             onSearch={handlePriceSearch}
           />
-
-          {/* 색상 필터링 주석처리 */}
-
-          {/* <hr className="my-8" />
-
-          {Object.entries(availableOptions).map(([optionName, values]) => (
-            <ColorFilter
-              key={optionName}
-              values={values}
-              selectedColors={selectedColors}
-              onColorSelect={handleColorSelect}
-            />
-          ))} */}
         </>
       )}
     </div>
