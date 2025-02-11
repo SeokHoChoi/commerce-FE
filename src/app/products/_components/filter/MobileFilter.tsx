@@ -39,10 +39,10 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
   const [selectedPriceRange, setSelectedPriceRange] = useState<PriceRange | undefined>(() => {
     const minParam = searchParams.get('priceMin');
     const maxParam = searchParams.get('priceMax');
-    if (minParam && maxParam) {
+    if (minParam || maxParam) {
       return {
-        min: Number(minParam),
-        max: Number(maxParam),
+        min: minParam ? Number(minParam) : priceRangeValues.min,
+        max: maxParam ? Number(maxParam) : priceRangeValues.max,
       };
     }
     return undefined;
@@ -70,15 +70,15 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
     const maxParam = searchParams.get('priceMax');
     const ratingParam = searchParams.get('rating');
 
-    if (minParam && maxParam) {
-      const newMin = Number(minParam);
-      const newMax = Number(maxParam);
-      setPriceRange({ min: newMin, max: newMax });
-      setSliderValue([newMin, newMax]);
+    const newMin = minParam ? Number(minParam) : priceRangeValues.min;
+    const newMax = maxParam ? Number(maxParam) : priceRangeValues.max;
+
+    setPriceRange({ min: newMin, max: newMax });
+    setSliderValue([newMin, newMax]);
+
+    if (minParam || maxParam) {
       setSelectedPriceRange({ min: newMin, max: newMax });
     } else {
-      setPriceRange({ min: priceRangeValues.min, max: priceRangeValues.max });
-      setSliderValue([priceRangeValues.min, priceRangeValues.max]);
       setSelectedPriceRange(undefined);
     }
 
@@ -106,8 +106,19 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
 
   const handlePriceSearch = () => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set('priceMin', priceRange.min.toString());
-    params.set('priceMax', priceRange.max.toString());
+
+    if (priceRange.min !== priceRangeValues.min) {
+      params.set('priceMin', priceRange.min.toString());
+    } else {
+      params.delete('priceMin');
+    }
+
+    if (priceRange.max !== priceRangeValues.max) {
+      params.set('priceMax', priceRange.max.toString());
+    } else {
+      params.delete('priceMax');
+    }
+
     router.push(`?${params.toString()}`);
     setSelectedPriceRange(priceRange);
   };
@@ -134,6 +145,7 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
     setPriceRange({ min: priceRangeValues.min, max: priceRangeValues.max });
     setSliderValue([priceRangeValues.min, priceRangeValues.max]);
     setSelectedRating(null);
+    setSelectedColors([]);
   };
 
   return (
@@ -147,7 +159,15 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
         <div className="flex items-center gap-3 flex-1">
           <MobileSelectedOptionTag
             priceRange={selectedPriceRange}
-            onPriceRangeRemove={() => setSelectedPriceRange(undefined)}
+            onPriceRangeRemove={() => {
+              setSelectedPriceRange(undefined);
+              setPriceRange({ min: priceRangeValues.min, max: priceRangeValues.max });
+              setSliderValue([priceRangeValues.min, priceRangeValues.max]);
+              const params = new URLSearchParams(searchParams.toString());
+              params.delete('priceMin');
+              params.delete('priceMax');
+              router.push(`?${params.toString()}`);
+            }}
             selectedColors={selectedColors}
             onColorRemove={(color) => setSelectedColors((prev) => prev.filter((c) => c !== color))}
             selectedRating={selectedRating}
@@ -207,7 +227,15 @@ export const MobileFilter: React.FC<FilterProps> = ({ products }) => {
 
           <MobileSelectedOptionTag
             priceRange={selectedPriceRange}
-            onPriceRangeRemove={() => setSelectedPriceRange(undefined)}
+            onPriceRangeRemove={() => {
+              setSelectedPriceRange(undefined);
+              setPriceRange({ min: priceRangeValues.min, max: priceRangeValues.max });
+              setSliderValue([priceRangeValues.min, priceRangeValues.max]);
+              const params = new URLSearchParams(searchParams.toString());
+              params.delete('priceMin');
+              params.delete('priceMax');
+              router.push(`?${params.toString()}`);
+            }}
             selectedColors={selectedColors}
             onColorRemove={(color) => setSelectedColors((prev) => prev.filter((c) => c !== color))}
             selectedRating={selectedRating}
