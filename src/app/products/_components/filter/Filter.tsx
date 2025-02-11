@@ -132,7 +132,13 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
         <>
           <SelectedOptionTag
             priceRange={selectedPriceRange}
-            onPriceRangeRemove={() => setSelectedPriceRange(undefined)}
+            onPriceRangeRemove={() => {
+              const params = new URLSearchParams(searchParams.toString());
+              params.delete('priceMin');
+              params.delete('priceMax');
+              router.push(`/products?${params.toString()}`);
+              setSelectedPriceRange(undefined);
+            }}
           />
           <RatingFilter />
           <hr className="my-8" />
