@@ -19,14 +19,16 @@ export const RatingFilter = () => {
 
   const renderStars = (rating: number) => {
     return (
-      <div className="flex items-center gap-1 cursor-pointer" onClick={() => handleRatingClick(rating)}>
+      <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleRatingClick(rating)}>
         <div className="flex">
           {[...Array(5)].map((_, index) => {
             const StarComponent = index < rating ? StarFilledIcon : StarEmptyIcon;
             return <StarComponent key={index} className="h-5 w-5 text-yellow-400" />;
           })}
         </div>
-        <span className="text-sm text-gray-600">{rating}점 이상</span>
+        <span className={`text-sm ${selectedRating === rating ? 'text-blue-600' : 'text-gray-600'}`}>
+          {rating}점 이상
+        </span>
       </div>
     );
   };
@@ -36,7 +38,7 @@ export const RatingFilter = () => {
       <h3 className="font-medium">별점</h3>
       <div className="space-y-2">
         {[4, 3, 2, 1].map((rating) => (
-          <div key={rating} className={`p-2 rounded-lg ${selectedRating === rating ? 'bg-gray-100' : ''}`}>
+          <div key={rating} className={`p-2 rounded-lg ${selectedRating === rating ? 'bg-gray-100 font-bold' : ''}`}>
             {renderStars(rating)}
           </div>
         ))}
