@@ -45,6 +45,10 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
     }
     return undefined;
   });
+  const [selectedRating, setSelectedRating] = useState<number | null>(() => {
+    const ratingParam = searchParams.get('rating');
+    return ratingParam ? Number(ratingParam) : null;
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [sliderValue, setSliderValue] = useState(() => {
     const minParam = searchParams.get('priceMin');
@@ -75,6 +79,11 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
       setSelectedPriceRange(undefined);
     }
   }, [searchParams, priceRangeValues]);
+
+  useEffect(() => {
+    const ratingParam = searchParams.get('rating');
+    setSelectedRating(ratingParam ? Number(ratingParam) : null);
+  }, [searchParams]);
 
   const handlePriceSearch = () => {
     const params = new URLSearchParams(searchParams.toString());
@@ -111,6 +120,7 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
     params.delete('rating');
     router.push(`?${params.toString()}`);
     setSelectedPriceRange(undefined);
+    setSelectedRating(null);
   };
 
   return (
@@ -138,6 +148,13 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
               params.delete('priceMax');
               router.push(`/products?${params.toString()}`);
               setSelectedPriceRange(undefined);
+            }}
+            selectedRating={selectedRating}
+            onRatingRemove={() => {
+              const params = new URLSearchParams(searchParams.toString());
+              params.delete('rating');
+              router.push(`/products?${params.toString()}`);
+              setSelectedRating(null);
             }}
           />
           <RatingFilter />

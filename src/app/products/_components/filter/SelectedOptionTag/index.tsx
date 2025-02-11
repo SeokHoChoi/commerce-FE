@@ -53,18 +53,18 @@ export const SelectedOptionTag = ({
             </div>
           ))}
           {selectedRating && (
-            <div className="flex items-center gap-2">
+            <span className="flex items-center gap-4 w-fit bg-slate-500 py-2 px-3 rounded-full">
               <div className="flex items-center">
                 {[...Array(5)].map((_, index) => {
                   const StarComponent = index < selectedRating ? StarFilledIcon : StarEmptyIcon;
-                  return <StarComponent key={index} className="h-4 w-4 text-yellow-400" />;
+                  return <StarComponent key={index} className="h-4 w-4 text-white" />;
                 })}
               </div>
-              <span className="text-sm text-gray-600">{selectedRating}점 이상</span>
-              <button onClick={onRatingRemove} className="text-xs text-gray-400 hover:text-gray-600">
+              <span className="text-sm font-semibold text-white">{selectedRating}점 이상</span>
+              <button onClick={onRatingRemove} className="text-md text-white">
                 ✕
               </button>
-            </div>
+            </span>
           )}
         </div>
       </div>

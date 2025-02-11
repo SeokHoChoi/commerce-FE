@@ -38,7 +38,7 @@ export const RatingFilter = () => {
       <h3 className="font-medium">별점</h3>
       <div className="space-y-2">
         {[4, 3, 2, 1].map((rating) => (
-          <div key={rating} className={`p-2 rounded-lg ${selectedRating === rating ? 'bg-gray-100 font-bold' : ''}`}>
+          <div key={rating} className={`p-2 rounded-lg ${selectedRating === rating ? 'font-bold' : ''}`}>
             {renderStars(rating)}
           </div>
         ))}
