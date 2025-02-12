@@ -5,10 +5,10 @@ import { StarIcon as StarFilledIcon } from '@heroicons/react/24/solid';
 export const RatingFilter = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const selectedRating = searchParams.get('rating') ? Number(searchParams.get('rating')) : null;
+  const selectedRating = searchParams?.get('rating') ? Number(searchParams?.get('rating')) : null;
 
   const handleRatingClick = (rating: number) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || '');
     if (selectedRating === rating) {
       params.delete('rating');
     } else {

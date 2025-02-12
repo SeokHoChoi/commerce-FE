@@ -27,16 +27,16 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
   }, [products]);
 
   const [priceRange, setPriceRange] = useState<PriceRange>(() => {
-    const minParam = searchParams.get('priceMin');
-    const maxParam = searchParams.get('priceMax');
+    const minParam = searchParams?.get('priceMin');
+    const maxParam = searchParams?.get('priceMax');
     return {
       min: minParam ? Number(minParam) : priceRangeValues.min,
       max: maxParam ? Number(maxParam) : priceRangeValues.max,
     };
   });
   const [selectedPriceRange, setSelectedPriceRange] = useState<PriceRange | undefined>(() => {
-    const minParam = searchParams.get('priceMin');
-    const maxParam = searchParams.get('priceMax');
+    const minParam = searchParams?.get('priceMin');
+    const maxParam = searchParams?.get('priceMax');
     if (minParam || maxParam) {
       return {
         min: minParam ? Number(minParam) : priceRangeValues.min,
@@ -46,13 +46,13 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
     return undefined;
   });
   const [selectedRating, setSelectedRating] = useState<number | null>(() => {
-    const ratingParam = searchParams.get('rating');
+    const ratingParam = searchParams?.get('rating');
     return ratingParam ? Number(ratingParam) : null;
   });
   const [isLoading, setIsLoading] = useState(true);
   const [sliderValue, setSliderValue] = useState(() => {
-    const minParam = searchParams.get('priceMin');
-    const maxParam = searchParams.get('priceMax');
+    const minParam = searchParams?.get('priceMin');
+    const maxParam = searchParams?.get('priceMax');
     return [minParam ? Number(minParam) : priceRangeValues.min, maxParam ? Number(maxParam) : priceRangeValues.max];
   });
   const router = useRouter();
@@ -64,8 +64,8 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
   }, [products]);
 
   useEffect(() => {
-    const minParam = searchParams.get('priceMin');
-    const maxParam = searchParams.get('priceMax');
+    const minParam = searchParams?.get('priceMin');
+    const maxParam = searchParams?.get('priceMax');
 
     const newMin = minParam ? Number(minParam) : priceRangeValues.min;
     const newMax = maxParam ? Number(maxParam) : priceRangeValues.max;
@@ -81,12 +81,12 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
   }, [searchParams, priceRangeValues]);
 
   useEffect(() => {
-    const ratingParam = searchParams.get('rating');
+    const ratingParam = searchParams?.get('rating');
     setSelectedRating(ratingParam ? Number(ratingParam) : null);
   }, [searchParams]);
 
   const handlePriceSearch = () => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || '');
 
     if (priceRange.min !== priceRangeValues.min) {
       params.set('priceMin', priceRange.min.toString());
@@ -114,7 +114,7 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
   };
 
   const handleReset = () => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || '');
     params.delete('priceMin');
     params.delete('priceMax');
     params.delete('rating');
@@ -143,7 +143,7 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
           <SelectedOptionTag
             priceRange={selectedPriceRange}
             onPriceRangeRemove={() => {
-              const params = new URLSearchParams(searchParams.toString());
+              const params = new URLSearchParams(searchParams?.toString() || '');
               params.delete('priceMin');
               params.delete('priceMax');
               router.push(`/products?${params.toString()}`);
@@ -151,7 +151,7 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
             }}
             selectedRating={selectedRating}
             onRatingRemove={() => {
-              const params = new URLSearchParams(searchParams.toString());
+              const params = new URLSearchParams(searchParams?.toString() || '');
               params.delete('rating');
               router.push(`/products?${params.toString()}`);
               setSelectedRating(null);
