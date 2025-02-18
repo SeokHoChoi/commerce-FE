@@ -8,8 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { SelectedOptionTag } from '@/app/products/_components/filter/SelectedOptionTag';
 import { PriceFilter } from '@/app/products/_components/filter/PriceFilter';
 import { RatingFilter } from '@/app/products/_components/filter/RatingFilter';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 
 const Filter: React.FC<FilterProps> = ({ products }) => {
   const searchParams = useSearchParams();
@@ -49,19 +48,12 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
     const ratingParam = searchParams?.get('rating');
     return ratingParam ? Number(ratingParam) : null;
   });
-  const [isLoading, setIsLoading] = useState(true);
   const [sliderValue, setSliderValue] = useState(() => {
     const minParam = searchParams?.get('priceMin');
     const maxParam = searchParams?.get('priceMax');
     return [minParam ? Number(minParam) : priceRangeValues.min, maxParam ? Number(maxParam) : priceRangeValues.max];
   });
   const router = useRouter();
-
-  useEffect(() => {
-    if (products) {
-      setIsLoading(false);
-    }
-  }, [products]);
 
   useEffect(() => {
     const minParam = searchParams?.get('priceMin');
@@ -123,20 +115,27 @@ const Filter: React.FC<FilterProps> = ({ products }) => {
     setSelectedRating(null);
   };
 
+  const hasProducts = products.length > 0;
+
   return (
     <div className="w-full max-w-xs rounded-lg p-7">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-lg font-bold">필터</h2>
-        <button onClick={handleReset} className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
+        <button
+          onClick={handleReset}
+          className={`text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 ${!hasProducts && 'opacity-50 cursor-not-allowed'}`}
+          disabled={!hasProducts}
+        >
           <ArrowPathIcon className="h-4 w-4" />
           초기화
         </button>
       </div>
       <hr />
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <LoadingSpinner size={30} />
+      {!hasProducts ? (
+        <div className="flex flex-col items-center justify-center py-10 text-slate-500">
+          <AdjustmentsHorizontalIcon className="w-10 h-10 mb-3" />
+          <p className="text-sm text-center">필터를 적용할 상품이 없습니다</p>
         </div>
       ) : (
         <>
